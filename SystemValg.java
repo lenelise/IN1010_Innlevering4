@@ -3,8 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.io.PrintWriter;
 
-//en kommentar her
-
 /**
  * Klasse  med metoder for hvert valg i menyen til Legesystem.java, i tillegg til en metode for å lese inn fil
  */
@@ -146,124 +144,127 @@ class SystemValg{
         System.out.println("");
         Scanner s = new Scanner(System.in);
 
-        //OPPRETT LEGE:
-        if (elementType.equals("lege")){
-            System.out.println("Legens navn: ");
-            String navn = s.nextLine();
-            System.out.println("Legens kontrollkode (tast 0 hvis legen ikke har kontrollkode): ");
-            String kontrollkode = s.nextLine();
-            Lege lege;
-            if (kontrollkode.equals("0")){
-                lege = new Lege(navn);
-            } else {
-                lege = new Spesialist(navn, kontrollkode);
-            }
-            Legesystem.legeListe.leggTil(lege);
-        } 
-        
-        //OPPRETT PASIENT
-        else if (elementType.equals("pasient")){ 
-            System.out.println("Pasientens navn: ");
-            String navn = s.nextLine();
-            System.out.println("Pasientens SSN: ");
-            String SSN = s.nextLine();
-            Pasient pasient = new Pasient(navn, SSN);
-            Legesystem.pasientListe.leggTil(pasient);
-            
-        } 
-        
-        //OPPRETT RESEPT (KUN HVIT MULIG PR NAA)
-        else if (elementType.equals("resept")){
-            System.out.println("Type resept (hvit/blaa/mil/p) - kun hvit mulig per naa: ");
-            String typeResept = s.nextLine();
-
-            //sjekker at hvit er valgt:
-            if (typeResept.equals("blaa") || typeResept.equals("mil")||typeResept.equals("p")){
-                System.out.println("Det finnes ikke digital loesning for andre resepter enn hvite.");
-                return;
-            } else if (!typeResept.equals("hvit")){
-                System.out.println("Ugyldig resepttype: " + typeResept);
-                return;
-            }
-            
-            //oppretter hvit resept:
-            if (typeResept.equals("hvit")){
-                System.out.println("Velg utskrivende lege (navn): ");
-                System.out.println(Legesystem.legeListe.toString());
-                String legeNavn = s.nextLine();
-                Lege utskrivendeLege = null;
-                for (Lege dr:Legesystem.legeListe){
-                    if (dr.hentNavn().equals(legeNavn)){
-                        utskrivendeLege = dr;
-                        break;
-                    }
+        try{
+            //OPPRETT LEGE:
+            if (elementType.equals("lege")){
+                System.out.println("Legens navn: ");
+                String navn = s.nextLine();
+                System.out.println("Legens kontrollkode (tast 0 hvis legen ikke har kontrollkode): ");
+                String kontrollkode = s.nextLine();
+                Lege lege;
+                if (kontrollkode.equals("0")){
+                    lege = new Lege(navn);
+                } else {
+                    lege = new Spesialist(navn, kontrollkode);
                 }
+                Legesystem.legeListe.leggTil(lege);
+            } 
+            
+            //OPPRETT PASIENT
+            else if (elementType.equals("pasient")){ 
+                System.out.println("Pasientens navn: ");
+                String navn = s.nextLine();
+                System.out.println("Pasientens SSN: ");
+                String SSN = s.nextLine();
+                Pasient pasient = new Pasient(navn, SSN);
+                Legesystem.pasientListe.leggTil(pasient);
+                
+            } 
+            
+            //OPPRETT RESEPT (KUN HVIT MULIG PR NAA)
+            else if (elementType.equals("resept")){
+                System.out.println("Type resept (hvit/blaa/mil/p) - kun hvit mulig per naa: ");
+                String typeResept = s.nextLine();
 
-                //Sjekker at input er gyldig legenavn: 
-                if (utskrivendeLege==null){
-                    System.out.println("Ugyldig lege: " + legeNavn);
+                //sjekker at hvit er valgt:
+                if (typeResept.equals("blaa") || typeResept.equals("mil")||typeResept.equals("p")){
+                    System.out.println("Det finnes ikke digital loesning for andre resepter enn hvite.");
+                    return;
+                } else if (!typeResept.equals("hvit")){
+                    System.out.println("Ugyldig resepttype: " + typeResept);
                     return;
                 }
-
-                //Typecaster hvis legeobjektet er spesialist:
-                if (!utskrivendeLege.hentKontrollkode().equals("0")){
-                    utskrivendeLege = (Spesialist) utskrivendeLege;
-                }
-
-                //velg pasient fra lista
-                System.out.println("Velg pasient (nr):");
-                System.out.println(Legesystem.pasientListe.toString());
-                int pasientNr = Integer.parseInt(s.nextLine());
-                Pasient pasient = Legesystem.pasientListe.hent(pasientNr);
-
-                //velg legemiddel fra lista
-                System.out.println("Velg legemiddel (nr):");
-                System.out.println(Legesystem.legemiddelListe.toString());
-                int legemiddelNr = Integer.parseInt(s.nextLine());
-                Legemiddel legemiddel = Legesystem.legemiddelListe.hent(legemiddelNr);
-
-                //opprett resept:
-                Resept resept = utskrivendeLege.skrivHvitResept(legemiddel,pasient,3);
-                Legesystem.reseptListe.leggTil(resept);               
-            }
-
-        } 
-        
-        //OPPRETT LEGEMIDDEL
-        else if(elementType.equals("legemiddel")){
-            System.out.println("Hvilken type (vanlig/vanedannende/narkotisk)?");
-            String legemiddelType = s.nextLine();
-            if(!(legemiddelType.equals("vanlig")||legemiddelType.equals("vanedannende")||legemiddelType.equals("narkotisk"))){
-                System.out.println("Ugyldig legemiddeltype: " + legemiddelType);
-                return;
-            }
-            System.out.println("navn paa legemiddel: ");
-            String navn = s.nextLine();
-            System.out.println("Pris (heltall): ");
-            int pris = Integer.parseInt(s.nextLine());
-            System.out.println("Virkestoff i mg (flyttall): ");
-            double virkestoff = Double.parseDouble(s.nextLine());
-
-            Legemiddel nyttLegemiddel=null;
-            
-            if (legemiddelType.equals("vanlig")){
-                nyttLegemiddel = new Vanlig(navn, pris, virkestoff);
-            } else{
-                System.out.println("Styrke (1-10): ");
-                int styrke = Integer.parseInt(s.nextLine());
-                if (legemiddelType.equals("vanedannende")){
-                    nyttLegemiddel = new Vanedannende(navn, pris, virkestoff, styrke);
-                } else if (legemiddelType.equals("narkotisk")){
-                    nyttLegemiddel = new Narkotisk(navn, pris, virkestoff, styrke);
+                
+                //oppretter hvit resept:
+                if (typeResept.equals("hvit")){
+                    System.out.println("Velg utskrivende lege (navn): ");
+                    System.out.println(Legesystem.legeListe.toString());
+                    String legeNavn = s.nextLine();
+                    Lege utskrivendeLege = null;
+                    for (Lege dr:Legesystem.legeListe){
+                        if (dr.hentNavn().equals(legeNavn)){
+                            utskrivendeLege = dr;
+                            break;
+                        }
                     }
+
+                    //Sjekker at input er gyldig legenavn: 
+                    if (utskrivendeLege==null){
+                        System.out.println("Ugyldig lege: " + legeNavn);
+                        return;
+                    }
+
+                    //Typecaster hvis legeobjektet er spesialist:
+                    if (!utskrivendeLege.hentKontrollkode().equals("0")){
+                        utskrivendeLege = (Spesialist) utskrivendeLege;
+                    }
+
+                    //velg pasient fra lista
+                    System.out.println("Velg pasient (nr):");
+                    System.out.println(Legesystem.pasientListe.toString());
+                    int pasientNr = Integer.parseInt(s.nextLine());
+                    Pasient pasient = Legesystem.pasientListe.hent(pasientNr);
+
+                    //velg legemiddel fra lista
+                    System.out.println("Velg legemiddel (nr):");
+                    System.out.println(Legesystem.legemiddelListe.toString());
+                    int legemiddelNr = Integer.parseInt(s.nextLine());
+                    Legemiddel legemiddel = Legesystem.legemiddelListe.hent(legemiddelNr);
+
+                    //opprett resept:
+                    Resept resept = utskrivendeLege.skrivHvitResept(legemiddel,pasient,3);
+                    Legesystem.reseptListe.leggTil(resept);               
                 }
-                Legesystem.legemiddelListe.leggTil(nyttLegemiddel);
-        } 
-        
-        //UGYLDIG INPUT:
-        else{
-            System.out.println("Ugyldig type objekt: " + elementType);
-        }
+            } 
+            
+            //OPPRETT LEGEMIDDEL
+            else if(elementType.equals("legemiddel")){
+                System.out.println("Hvilken type (vanlig/vanedannende/narkotisk)?");
+                String legemiddelType = s.nextLine();
+                if(!(legemiddelType.equals("vanlig")||legemiddelType.equals("vanedannende")||legemiddelType.equals("narkotisk"))){
+                    System.out.println("Ugyldig legemiddeltype: " + legemiddelType);
+                    return;
+                }
+                System.out.println("navn paa legemiddel: ");
+                String navn = s.nextLine();
+                System.out.println("Pris (heltall): ");
+                int pris = Integer.parseInt(s.nextLine());
+                System.out.println("Virkestoff i mg (flyttall): ");
+                double virkestoff = Double.parseDouble(s.nextLine());
+
+                Legemiddel nyttLegemiddel=null;
+                
+                if (legemiddelType.equals("vanlig")){
+                    nyttLegemiddel = new Vanlig(navn, pris, virkestoff);
+                } else{
+                    System.out.println("Styrke (1-10): ");
+                    int styrke = Integer.parseInt(s.nextLine());
+                    if (legemiddelType.equals("vanedannende")){
+                        nyttLegemiddel = new Vanedannende(navn, pris, virkestoff, styrke);
+                    } else if (legemiddelType.equals("narkotisk")){
+                        nyttLegemiddel = new Narkotisk(navn, pris, virkestoff, styrke);
+                        }
+                    }
+                    Legesystem.legemiddelListe.leggTil(nyttLegemiddel);
+            } 
+            
+            //UGYLDIG INPUT:
+            else{
+                System.out.println("Ugyldig type objekt: " + elementType);
+            }
+        } finally{
+        s.close();
+    }
     }
 
     //VALG 3:
