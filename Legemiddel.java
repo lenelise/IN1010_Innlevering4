@@ -1,11 +1,3 @@
-/**
- * Legemiddelklasse: Vanlig, vanedannende, narkotisk.
- * @param navn String
- * @param pris int
- * @param virkestoff double 
- * @param styrke int, not required for all subclasses
- * 
- */
 abstract public class Legemiddel {
     public final int legemiddelId;
     public static int teller = 0; 

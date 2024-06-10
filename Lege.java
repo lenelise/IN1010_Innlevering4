@@ -1,9 +1,3 @@
-/**
- * Legeklasse
- * @param navn String, navnet på legen. Maa oppgis ved initialisering av klasseinstans.
- * @param utskrevneResepter IndeksertListe over reseptene denne legen har skrevet ut. 
- */
-
 class Lege implements Comparable<Lege>{
     String navn; 
     IndeksertListe<Resept> utskrevneResepter;

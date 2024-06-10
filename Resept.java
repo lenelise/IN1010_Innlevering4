@@ -1,9 +1,3 @@
-/**
- * Resept. 
- * @param id int, unik, final, automatisk generert. 
- * 
- */
-
 abstract class Resept{
     public final int reseptId; 
     public static int teller = 0; 

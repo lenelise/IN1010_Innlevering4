@@ -1,14 +1,7 @@
 import java.util.ArrayList;
 
-/**
- * Pasientklasse
- * @param SSN String, foedselsnummer. Final.
- * @param navn String. 
- * @param pasientId int, final, automatisk generert. 
- */
-
 class Pasient{
-    public final String SSN; //foedselsnr (Social security number)
+    public final String SSN; //Social security number
     public String navn;
     public final int pasientId;
     public static int idTeller;
